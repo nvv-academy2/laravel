@@ -1,5 +1,6 @@
 <?php
-
+//laravel Model relations
+use \App\Product;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -53,3 +54,28 @@ Route::group([
 });
 */
 
+Route::pattern('category', '[0-9]+');
+Route::get("/categories/filter", "CategoriesController@filterCategoriesIds");
+Route::resource('/categories', "CategoriesController");
+
+
+//Route::get('/category/{id}');
+Auth::routes();
+
+Route::get('/seed', function () {
+
+    $products = [];
+
+    $categories = \App\Category::all()->pluck('id')->toArray();
+
+    for($i = 0; $i < 10; $i++) {
+        $products[] = [
+            'name' => "Product $i",
+            'category_id' => array_rand($categories),
+        ];
+    }
+
+    Product::insert($products);
+});
+
+Route::get('/home', 'HomeController@index')->name('home');
