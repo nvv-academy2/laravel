@@ -3,10 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Category;
+use App\Http\Requests\CreateCategory;
+use App\Http\Requests\UpdateCategory;
+use App\Services\CategoryService;
+use App\User;
 use Illuminate\Http\Request;
 
 class CategoriesController extends Controller
 {
+    private $categoryService;
+    public function __construct(CategoryService $categoryService)
+    {
+        $this->categoryService = $categoryService;
+    }
+
     public function index(Request $request)
     {
         $orderBy = $request->input('orderBy', 'id');
@@ -26,48 +36,26 @@ class CategoriesController extends Controller
         return response()->json(Category::find($id));
     }
 
-    public function store(Request $request)
+    public function store(CreateCategory $request)
     {
-        $name = $request->input('name');
-        $weight = $request->input('weight');
-
-        $category = new Category();
-        $category->name = $name;
-        $category->weight = $weight;
-        $category->save();
-
-        Category::insert(
-            [
-                [
-                    'name' => $name.rand(1,111),
-                    'weight' => rand(1,11)
-                ],
-                [
-                    'name' => $name.rand(1,111),
-                    'weight' => rand(1,11)
-                ],
-                [
-                    'name' => $name.rand(1,111),
-                    'weight' => rand(1,11)
-                ],
-            ]
-        );
-
-        return response()->json($category);
+        $this->categoryService->createCategory($request);
+        return redirect()->route('dashboard');
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateCategory $request, Category $category)
     {
-        $category = Category::find($id);
-        $category->name = $request->input('name', $category->name);
-        $category->weight = $request->input('weight', $category->weight);
-        $category->save();
-        return response()->json($category, 202);
+        $this->categoryService->setCategory($category)->updateCategory($request);
+        return redirect()->route('dashboard');
     }
 
     public function destroy($id)
     {
         $res = (bool) Category::findOrFail($id)->delete();
-        return response()->json(['result' => $res]);
+        return redirect()->route('dashboard');
+    }
+
+    public function upd()
+    {
+        dd("This is PUT REQUEST");
     }
 }

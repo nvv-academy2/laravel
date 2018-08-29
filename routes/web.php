@@ -29,31 +29,6 @@ Route::get('users', 'UsersController@index');
 
 Route::resource('test', "TestController");//->only(['store', 'index']);
 
-/*
-Route::post('test', 'TestController@store');
-Route::get('test', 'TestController@index');
-Route::get('test/{id}', 'TestController@show');
-Route::put('test/{id}', 'TestController@update');
-Route::delete('test/{id}', 'TestController@destroy');
-*/
-/*
-Route::group([
-    'prefix' => 'users'
-], function() {
-    Route::get("/", function () {
-        die("hello main");
-    });
-
-    Route::get("list", function () {
-        die("hello list");
-    });
-
-    Route::get("test", function () {
-        die("hello test");
-    });
-});
-*/
-
 Route::pattern('category', '[0-9]+');
 Route::get("/categories/filter", "CategoriesController@filterCategoriesIds");
 Route::resource('/categories', "CategoriesController");
@@ -78,4 +53,4 @@ Route::get('/seed', function () {
     Product::insert($products);
 });
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/home', 'HomeController@index')->name('dashboard');
