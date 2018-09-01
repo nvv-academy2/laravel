@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 
 use App\Helpers\Helper;
+use App\Test;
 use App\User;
 use Illuminate\Http\Request;
 
@@ -15,30 +16,23 @@ class TestController extends Controller
         $this->helper = $helper;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        die("I WILL SHOW LIST");
+        $collection = Test::all();
+        $data = $collection->toArray();
+        /*$collection = $collection->map(function (Test $test) {
+                    $test->date = date("Y-m-d H:i:s", $test->date);
+                    return $test;
+                });*/
+        return view('test', ['data' => $data, 'user' => $request->user()]);
     }
 
-    public function show()
+    public function store(Request $request)
     {
-        die("I WILL SHOW ONE");
-    }
-
-    public function update(Request $request, $id)
-    {
-        $this->helper->test();
-        dd($request->input('test', "111111111111"));
-        die("I WILL UPDATE $id");
-    }
-
-    public function destroy($id)
-    {
-        die("I WILL DESTROY $id");
-    }
-
-    public function store()
-    {
-        die("I WILL CREATE");
+        $test = new Test();
+        $test->name = $request->name;
+        $test->date = $request->date;
+        $test->save();
+        return response()->json($test);
     }
 }

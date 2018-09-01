@@ -12,31 +12,44 @@ use \App\Product;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
-Route::get("test", function () {
-    die("hello world");
-});
+Route::group(['middleware' => 'log'], function() {
 
-Route::get("users", function () {
-    die("hello world");
-});
+    Route::get('/', function () {
+        return view('welcome');
+    });
+
+    Route::get("test", function () {
+        die("hello world");
+    });
+
+    Route::get("users", function () {
+        die("hello world");
+    });
 
 
-Route::get('users', 'UsersController@index');
+    Route::get('users', 'UsersController@index');
 
-Route::resource('test', "TestController");//->only(['store', 'index']);
+    Route::resource('test', "TestController");//->only(['store', 'index']);
 
-Route::pattern('category', '[0-9]+');
-Route::get("/categories/filter", "CategoriesController@filterCategoriesIds");
-Route::resource('/categories', "CategoriesController");
+    Route::pattern('category', '[0-9]+');
+    Route::get("/categories/filter", "CategoriesController@filterCategoriesIds");
+    Route::resource('/categories', "CategoriesController");
 
 
 //Route::get('/category/{id}');
-Auth::routes();
+    Auth::routes();
 
+
+
+    Route::get('/home', 'HomeController@index')->name('dashboard');
+
+//Route::resource('test', "TestController")->only(['index', 'store']);
+
+    Route::get('test', 'TestController@index');
+    Route::post('test', 'TestController@store')->middleware('admin');
+});
+//Laravel seeds todo
 Route::get('/seed', function () {
 
     $products = [];
@@ -53,4 +66,3 @@ Route::get('/seed', function () {
     Product::insert($products);
 });
 
-Route::get('/home', 'HomeController@index')->name('dashboard');
